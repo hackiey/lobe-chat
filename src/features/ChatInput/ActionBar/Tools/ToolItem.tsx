@@ -7,11 +7,18 @@ import { useAgentStore } from '@/store/agent';
 import { agentSelectors } from '@/store/agent/selectors';
 import { useToolStore } from '@/store/tool';
 import { customPluginSelectors } from '@/store/tool/selectors';
+import { useChatStore } from '@/store/chat';
+import { topicSelectors } from '@/store/chat/selectors';
 
 const ToolItem = memo<{ identifier: string; label: string }>(({ identifier, label }) => {
-  const [checked, togglePlugin] = useAgentStore((s) => [
-    agentSelectors.currentAgentPlugins(s).includes(identifier),
-    s.togglePlugin,
+  // const [checked, togglePlugin] = useAgentStore((s) => [
+  //   agentSelectors.currentAgentPlugins(s).includes(identifier),
+  //   s.togglePlugin,
+  // ]);
+
+  const [checked, toggleTopicPlugin] = useChatStore((s) => [
+    topicSelectors.currentTopicPlugins(s).includes(identifier),
+    s.toggleTopicPlugin,
   ]);
 
   const isCustom = useToolStore((s) => customPluginSelectors.isCustomPlugin(identifier)(s));
@@ -23,7 +30,7 @@ const ToolItem = memo<{ identifier: string; label: string }>(({ identifier, labe
       justify={'space-between'}
       onClick={(e) => {
         e.stopPropagation();
-        togglePlugin(identifier);
+        toggleTopicPlugin(identifier);
       }}
       padding={'8px 12px'}
     >
@@ -35,7 +42,7 @@ const ToolItem = memo<{ identifier: string; label: string }>(({ identifier, labe
         checked={checked}
         onClick={(e) => {
           e.stopPropagation();
-          togglePlugin(identifier);
+          toggleTopicPlugin(identifier);
         }}
       />
     </Flexbox>

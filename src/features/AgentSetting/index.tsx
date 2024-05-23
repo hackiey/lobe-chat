@@ -15,9 +15,9 @@ const AgentSettings = (props: AgentSettingsProps) => {
       <StoreUpdater {...props} />
       <AgentPrompt />
       <AgentMeta />
-      <AgentChat />
+      {/*<AgentChat />*/}
       <AgentModal />
-      <AgentTTS />
+      {/*<AgentTTS />*/}
       <AgentPlugin />
     </Provider>
   );

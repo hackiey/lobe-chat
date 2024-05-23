@@ -31,4 +31,5 @@ export interface ITopicService {
   removeTopics(sessionId: string): Promise<any>;
   batchRemoveTopics(topics: string[]): Promise<any>;
   removeAllTopic(): Promise<any>;
+  updatePlugins(id: string, plugins: string[]): Promise<any>;
 }

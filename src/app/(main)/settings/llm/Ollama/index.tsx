@@ -20,7 +20,7 @@ const OllamaProvider = memo(() => {
         label: t('ollama.checker.title'),
         minWidth: undefined,
       }}
-      modelList={{ showModelFetcher: true }}
+      modelList={{ showModelFetcher: false }}
       provider={ModelProvider.Ollama}
       proxyUrl={{
         desc: t('ollama.endpoint.desc'),

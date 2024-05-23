@@ -25,8 +25,13 @@ export type ActionKeys = keyof ActionMap;
 type getActionList = (mobile?: boolean) => ActionKeys[];
 
 // we can make these action lists configurable in the future
+// export const getLeftActionList: getActionList = (mobile) =>
+//   ['model', 'fileUpload', 'temperature', 'history', !mobile && 'stt', 'tools', 'token'].filter(
+//     Boolean,
+//   ) as ActionKeys[];
+
 export const getLeftActionList: getActionList = (mobile) =>
-  ['model', 'fileUpload', 'temperature', 'history', !mobile && 'stt', 'tools', 'token'].filter(
+  ['model', 'fileUpload', 'tools', 'token'].filter(
     Boolean,
   ) as ActionKeys[];
 

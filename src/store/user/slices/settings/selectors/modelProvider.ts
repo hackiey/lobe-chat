@@ -93,6 +93,7 @@ const modelProviderList = (s: UserStore): ModelProviderCard[] => s.modelProvider
 const modelProviderListForModelSelect = (s: UserStore): ModelProviderCard[] =>
   modelProviderList(s)
     .filter((s) => s.enabled)
+    .filter((s) => s.id !== "ollama")
     .map((provider) => ({
       ...provider,
       chatModels: provider.chatModels.filter((model) => model.enabled),

@@ -8,6 +8,7 @@ import { nanoid } from '@/utils/uuid';
 export interface CreateTopicParams {
   favorite?: boolean;
   messages?: string[];
+  plugins?: string[];
   sessionId: string;
   title: string;
 }

@@ -56,12 +56,12 @@ const InboxWelcome = memo(() => {
         <Markdown className={styles.desc} variant={'chat'}>
           {t('guide.defaultMessage')}
         </Markdown>
-        {
-          showWelcomeSuggest && <>
-            <AgentsSuggest mobile={mobile} />
-            <QuestionSuggest mobile={mobile} />
-          </>
-        }
+        {/*{*/}
+        {/*  showWelcomeSuggest && <>*/}
+        {/*    <AgentsSuggest mobile={mobile} />*/}
+        {/*    <QuestionSuggest mobile={mobile} />*/}
+        {/*  </>*/}
+        {/*}*/}
       </Flexbox>
     </Center>
   );

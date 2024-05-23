@@ -17,18 +17,19 @@ export const AssistantActionsBar: RenderAction = memo(({ id, onActionClick, erro
 
   return (
     <ActionIconGroup
-      dropdownMenu={[
-        edit,
-        copy,
-        divider,
-        tts,
-        translate,
-        divider,
-        regenerate,
-        delAndRegenerate,
-        del,
-      ]}
-      items={[hasTools ? delAndRegenerate : edit, copy]}
+      // dropdownMenu={[
+      //   edit,
+      //   copy,
+      //   divider,
+      //   tts,
+      //   translate,
+      //   divider,
+      //   regenerate,
+      //   delAndRegenerate,
+      //   del,
+      // ]}
+      dropdownMenu={[]}
+      items={[delAndRegenerate, copy]}
       onActionClick={onActionClick}
       type="ghost"
     />

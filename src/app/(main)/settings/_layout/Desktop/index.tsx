@@ -11,7 +11,6 @@ import SideBar from './SideBar';
 const Layout = memo<LayoutProps>(({ children, category }) => {
   const ref = useRef<any>(null);
   const { md = true, mobile = false } = useResponsive();
-
   return (
     <Flexbox
       height={'100%'}

@@ -64,7 +64,8 @@ export interface ChatMessageAction {
    */
   clearMessage: () => Promise<void>;
   deleteMessage: (id: string) => Promise<void>;
-  delAndRegenerateMessage: (id: string) => Promise<void>;
+  deleteAfterMessages: (id: string, deleteCurrent?: boolean) => Promise<void>;
+  delAndRegenerateMessage: (id: string, deleteCurrent?: boolean) => Promise<void>;
   clearAllMessages: () => Promise<void>;
   // update
   updateInputMessage: (message: string) => void;
@@ -187,10 +188,48 @@ export const chatMessage: StateCreator<
     await deleteFn(id);
     await get().refreshMessages();
   },
-  delAndRegenerateMessage: async (id) => {
+  deleteAfterMessages: async (id, deleteCurrent?: boolean) => {
+    const message = chatSelectors.getMessageById(id)(get());
+    if (!message) return;
+
+    const deleteFn = async (id: string) => {
+      get().internal_dispatchMessage({ type: 'deleteMessage', id });
+      await messageService.removeMessage(id);
+    };
+
+    // if the message is a tool calls, then delete all the related messages
+    // TODO: maybe we need to delete it in the DB?
+    if (message.tools) {
+      const pools = message.tools
+        .flatMap((tool) => {
+          const messages = chatSelectors
+            .currentChats(get())
+            .filter((m) => m.tool_call_id === tool.id);
+
+          return messages.map((m) => m.id);
+        })
+        .map((i) => deleteFn(i));
+
+      await Promise.all(pools);
+    }
+
+    // 删除当前消息以及之后的所有消息
+    const messages = chatSelectors.currentChats(get());
+    let currentIndex = messages.findIndex((m) => m.id === id);
+    if (currentIndex < 0) return;
+    if (deleteCurrent !== undefined && !deleteCurrent) currentIndex += 1;
+    const pools = messages.slice(currentIndex).map((m) => deleteFn(m.id));
+    await Promise.all(pools);
+
+    await get().refreshMessages();
+  },
+  delAndRegenerateMessage: async (id, deleteCurrent?: boolean) => {
     const traceId = chatSelectors.getTraceIdByMessageId(id)(get());
     get().internal_resendMessage(id, traceId);
-    get().deleteMessage(id);
+
+    get().deleteAfterMessages(id, deleteCurrent);
+    // get().deleteMessage(id);
+    const messages = chatSelectors.currentChats(get());
 
     // trace the delete and regenerate message
     get().internal_traceMessage(id, { eventType: TraceEventType.DeleteAndRegenerateMessage });
@@ -378,6 +417,11 @@ export const chatMessage: StateCreator<
       nextContent: content,
     });
 
+    const message = chatSelectors.getMessageById(id)(get());
+    if (message && message.role === "user"){
+      get().delAndRegenerateMessage(id, false);
+    }
+
     await get().internal_updateMessageContent(id, content);
   },
   useFetchMessages: (sessionId, activeTopicId) =>
@@ -408,6 +452,11 @@ export const chatMessage: StateCreator<
 
   // the internal process method of the AI message
   internal_coreProcessMessage: async (messages, userMessageId, params) => {
+
+    if (messages.filter((item: any) => item.role === 'user').length > 32){
+      return;
+    }
+
     const { internal_fetchAIChatMessage, triggerToolCalls, refreshMessages, activeTopicId } = get();
 
     const { model, provider } = getAgentConfig();
@@ -520,7 +569,8 @@ export const chatMessage: StateCreator<
         model: config.model,
         provider: config.provider,
         ...config.params,
-        plugins: config.plugins,
+        // plugins: config.plugins,
+        plugins: topicSelectors.currentTopicPlugins(get())
       },
       trace: {
         traceId: params?.traceId,

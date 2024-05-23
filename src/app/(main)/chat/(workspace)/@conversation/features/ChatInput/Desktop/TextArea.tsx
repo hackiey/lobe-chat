@@ -1,7 +1,7 @@
 import { TextArea } from '@lobehub/ui';
 import { createStyles } from 'antd-style';
 import { TextAreaRef } from 'antd/es/input/TextArea';
-import { memo, useEffect, useRef } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useSendMessage } from '@/features/ChatInput/useSend';
@@ -48,6 +48,18 @@ const InputArea = memo<InputAreaProps>(({ setExpand }) => {
     s.updateInputMessage,
   ]);
 
+  const userMessagesLength = chatSelectors.currentChats(useChatStore.getState()).filter((item: any) => item.role === 'user').length;
+
+  const [disabled, setDisabled] = useState(false);
+  useEffect(() => {
+    // 获取用户消息数量
+    if (userMessagesLength >= 32){
+        setDisabled(true);
+    }else{
+        setDisabled(false);
+    }
+  }, [userMessagesLength]);
+
   const useCmdEnterToSend = useUserStore(preferenceSelectors.useCmdEnterToSend);
 
   const sendMessage = useSendMessage();
@@ -76,6 +88,7 @@ const InputArea = memo<InputAreaProps>(({ setExpand }) => {
       <TextArea
         autoFocus
         className={styles.textarea}
+        disabled={disabled}
         onBlur={(e) => {
           updateInputMessage?.(e.target.value);
         }}

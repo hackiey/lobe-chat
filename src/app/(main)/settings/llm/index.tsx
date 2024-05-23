@@ -24,22 +24,22 @@ const Page = () => {
   return (
     <Flexbox gap={24} width={'100%'}>
       <OpenAI />
-      <Ollama />
-      <Azure />
-      <Google />
-      <Anthropic />
-      <Bedrock />
-      <DeepSeek />
-      <OpenRouter />
-      <TogetherAI />
-      <Groq />
-      <Perplexity />
-      <Minimax />
-      <Mistral />
-      <Moonshot />
-      <Zhipu />
-      <ZeroOne />
-      <Footer />
+      {/*<Ollama />*/}
+      {/*<Azure />*/}
+      {/*<Google />*/}
+      {/*<Anthropic />*/}
+      {/*<Bedrock />*/}
+      {/*<DeepSeek />*/}
+      {/*<OpenRouter />*/}
+      {/*<TogetherAI />*/}
+      {/*<Groq />*/}
+      {/*<Perplexity />*/}
+      {/*<Minimax />*/}
+      {/*<Mistral />*/}
+      {/*<Moonshot />*/}
+      {/*<Zhipu />*/}
+      {/*<ZeroOne />*/}
+      {/*<Footer />*/}
     </Flexbox>
   );
 };

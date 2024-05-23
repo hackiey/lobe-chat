@@ -28,6 +28,7 @@ export interface OpenAIChatMessage {
    * @deprecated
    */
   function_call?: OpenAIFunctionCall;
+  id?: string,
   name?: string;
   /**
    * 角色

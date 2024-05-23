@@ -7,6 +7,13 @@ const currentTopics = (s: ChatStore): ChatTopic[] => s.topics;
 const currentActiveTopic = (s: ChatStore): ChatTopic | undefined => {
   return s.topics.find((topic) => topic.id === s.activeTopicId);
 };
+
+const currentTopicPlugins = (s: ChatStore): string[] => {
+  const topic = s.topics.find((topic) => topic.id === s.activeTopicId);
+
+  return topic && topic.plugins ? topic.plugins : s.defaultPlugins;
+}
+
 const searchTopics = (s: ChatStore): ChatTopic[] => s.searchTopics;
 
 const displayTopics = (s: ChatStore): ChatTopic[] =>
@@ -24,6 +31,7 @@ const getTopicById =
 export const topicSelectors = {
   currentActiveTopic,
   currentTopicLength,
+  currentTopicPlugins,
   currentTopics,
   currentUnFavTopics,
   displayTopics,

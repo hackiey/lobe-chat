@@ -67,4 +67,9 @@ export class ClientService implements ITopicService {
   async removeAllTopic() {
     return TopicModel.clearTable();
   }
+
+  async updatePlugins(id: string, plugins: string[]) {
+    return TopicModel.update(id, { plugins });
+  }
+
 }

@@ -15,7 +15,7 @@ import { chatService } from '@/services/chat';
 import { messageService } from '@/services/message';
 import { topicService } from '@/services/topic';
 import { CreateTopicParams } from '@/services/topic/type';
-import type { ChatStore } from '@/store/chat';
+import { ChatStore, useChatStore } from '@/store/chat';
 import { ChatMessage } from '@/types/message';
 import { ChatTopic } from '@/types/topic';
 import { setNamespace } from '@/utils/storeDebug';
@@ -23,6 +23,9 @@ import { setNamespace } from '@/utils/storeDebug';
 import { chatSelectors } from '../message/selectors';
 import { ChatTopicDispatch, topicReducer } from './reducer';
 import { topicSelectors } from './selectors';
+import { agentSelectors } from '@/store/agent/slices/chat/selectors';
+import { useSessionStore } from '@/store/session';
+import {useAgentStore} from "@/store/agent";
 
 const n = setNamespace('t');
 
@@ -32,6 +35,7 @@ const SWR_USE_SEARCH_TOPIC = 'SWR_USE_SEARCH_TOPIC';
 export interface ChatTopicAction {
   favoriteTopic: (id: string, favState: boolean) => Promise<void>;
   openNewTopicOrSaveTopic: () => Promise<void>;
+  toggleTopicPlugin: (id: string) => Promise<void>;
   refreshTopic: () => Promise<void>;
   removeAllTopics: () => Promise<void>;
   removeSessionTopics: () => Promise<void>;
@@ -86,6 +90,32 @@ export const chatTopic: StateCreator<
     // get().internal_updateTopicLoading(topicId, true);
 
     return topicId;
+  },
+
+  toggleTopicPlugin: async (identifier: string) => {
+
+    const currentTopic = topicSelectors.currentActiveTopic(get());
+    const currentPlugins = topicSelectors.currentTopicPlugins(get());
+    const open = !currentPlugins.includes(identifier);
+
+    const plugins = produce(currentPlugins, (draft) => {
+      const index = draft.indexOf(identifier);
+      if (open) {
+        if (index === -1) draft.push(identifier);
+      } else {
+        if (index !== -1) draft.splice(index, 1);
+      }
+    });
+
+    if (!currentTopic){
+      useChatStore.setState({
+        defaultPlugins: plugins,
+      });
+    }else{
+      await topicService.updatePlugins(currentTopic.id, plugins);
+    }
+
+    await get().refreshTopic();
   },
 
   saveToTopic: async () => {
@@ -209,8 +239,20 @@ export const chatTopic: StateCreator<
   switchTopic: async (id, skipRefreshMessage) => {
     set({ activeTopicId: !id ? (null as any) : id }, false, n('toggleTopic'));
 
-    if (skipRefreshMessage) return;
+    // if (skipRefreshMessage) return;
     await get().refreshMessages();
+
+    const sessionId = get().activeId;
+    console.log("Switch Topic", id, sessionId);
+
+    if (sessionId === "inbox"){
+      useChatStore.setState({defaultPlugins: []});
+    }else{
+      const session = useSessionStore.getState().sessions.find((s) => s.id === sessionId);
+      if (session) {
+        useChatStore.setState({ defaultPlugins: session.config.plugins || [] });
+      }
+    }
   },
   // delete
   removeSessionTopics: async () => {

@@ -41,6 +41,9 @@ const enabledSystemRoles =
       .map((manifest) => {
         if (!manifest) return '';
 
+        // TODO: dalle3 是一个特殊的插件，需要单独处理
+        if (manifest.identifier !== 'dalle3') return '';
+
         const meta = manifest.meta || {};
 
         const title = pluginHelpers.getPluginTitle(meta) || manifest.identifier;

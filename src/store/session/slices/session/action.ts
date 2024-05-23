@@ -27,6 +27,8 @@ import { SessionDispatch, sessionsReducer } from './reducers';
 import { sessionSelectors } from './selectors';
 import { sessionMetaSelectors } from './selectors/meta';
 
+import { useChatStore } from '@/store/chat';
+
 const n = setNamespace('session');
 
 const FETCH_SESSIONS_KEY = 'fetchSessions';

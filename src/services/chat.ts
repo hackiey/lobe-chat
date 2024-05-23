@@ -416,12 +416,13 @@ class ChatService {
     const postMessages = messages.map((m): OpenAIChatMessage => {
       switch (m.role) {
         case 'user': {
-          return { content: getContent(m), role: m.role };
+          return { content: getContent(m), id: m.id, role: m.role };
         }
 
         case 'assistant': {
           return {
             content: m.content,
+            id: m.id,
             role: m.role,
             tool_calls: m.tools?.map(
               (tool): MessageToolCall => ({
@@ -439,6 +440,7 @@ class ChatService {
         case 'tool': {
           return {
             content: m.content,
+            id: m.id,
             name: genToolCallingName(m.plugin!.identifier, m.plugin!.apiName, m.plugin?.type),
             role: m.role,
             tool_call_id: m.tool_call_id,
@@ -446,7 +448,7 @@ class ChatService {
         }
 
         default: {
-          return { content: m.content, role: m.role };
+          return { content: m.content, id: m.id, role: m.role };
         }
       }
     });

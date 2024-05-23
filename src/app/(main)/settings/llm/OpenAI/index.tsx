@@ -8,11 +8,14 @@ import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfi
 import ProviderConfig from '../components/ProviderConfig';
 
 const OpenAIProvider = memo(() => {
-  const { showOpenAIProxyUrl, showOpenAIApiKey } = useServerConfigStore(featureFlagsSelectors);
+  // const { showOpenAIProxyUrl, showOpenAIApiKey } = useServerConfigStore(featureFlagsSelectors);
+
+  const showOpenAIProxyUrl = false;
+  const showOpenAIApiKey = false;
 
   return (
     <ProviderConfig
-      modelList={{ showModelFetcher: true }}
+      modelList={{ showModelFetcher: false }}
       provider={'openai'}
       proxyUrl={
         showOpenAIProxyUrl && {

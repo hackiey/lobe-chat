@@ -23,6 +23,13 @@ export const POST = checkAuth(async (req: Request, { params, jwtPayload }) => {
 
     const data = (await req.json()) as ChatStreamPayload;
 
+    if (data.model !== "gpt-4o" && data.model !== "gpt-3.5-turbo") {
+      return createErrorResponse(ChatErrorType.OpenAIBizError, {
+        error: data.model+"模型已禁用，请更换为gpt-4o或gpt-3.5-turbo",
+        provider
+      });
+    }
+
     const tracePayload = getTracePayload(req);
 
     // If user enable trace
