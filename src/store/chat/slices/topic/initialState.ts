@@ -7,6 +7,7 @@ export interface ChatTopicState {
   isSearchingTopic: boolean;
   searchTopics: ChatTopic[];
   topicLoadingIds: string[];
+  topicMaps: Record<string, ChatTopic[]>;
   topicRenamingId?: string;
   topicSearchKeywords: string;
   topics: ChatTopic[];
@@ -22,6 +23,7 @@ export const initialTopicState: ChatTopicState = {
   isSearchingTopic: false,
   searchTopics: [],
   topicLoadingIds: [],
+  topicMaps: {},
   topicSearchKeywords: '',
   topics: [],
   topicsInit: false,

@@ -196,6 +196,10 @@ export const createSessionSlice: StateCreator<
 
   useFetchSessions: () =>
     useClientDataSWR<ChatSessionList>(FETCH_SESSIONS_KEY, sessionService.getGroupedSessions, {
+      fallbackData: {
+        sessionGroups: [],
+        sessions: [],
+      },
       onSuccess: (data) => {
         if (
           get().isSessionsFirstFetchFinished &&
@@ -211,6 +215,7 @@ export const createSessionSlice: StateCreator<
         );
         set({ isSessionsFirstFetchFinished: true }, false, n('useFetchSessions/onSuccess', data));
       },
+      suspense: true,
     }),
   useSearchSessions: (keyword) =>
     useSWR<LobeSessions>(
